@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -8,24 +9,26 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDTO } from './dto/create-song-dto';
-import { error } from 'console';
 import type { Connection } from '../common/constants/connection';
+import { Song } from './song.entity';
+import { DeleteResult } from 'typeorm';
+import { UpdateSongDTO } from './dto/update-song-dto';
+import { UpdateResult } from 'typeorm/browser';
 
 @Controller('songs')
 export class SongsController {
-  constructor(
-    private songsService: SongsService,
-    @Inject('CONNECTION')
-    private connection: Connection,
-  ) {
-    console.log(`THIS IS CONNECTION STRING ${this.connection.CONNECTION_STRING}`);
-    
+  constructor(private songsService: SongsService) {}
+  @Post()
+  create(@Body() createSongDTO: CreateSongDTO): Promise<Song> {
+    return this.songsService.create(createSongDTO);
   }
+
   @Get()
-  findAll() {
+  findAll(): Promise<Song[]> {
     try {
       return this.songsService.findAll();
     } catch (error) {
@@ -37,11 +40,6 @@ export class SongsController {
     }
   }
 
-  @Post()
-  create(@Body() createSongDTO: CreateSongDTO) {
-    return this.songsService.create(createSongDTO);
-  }
-
   @Get(':id')
   findOne(
     @Param(
@@ -49,7 +47,20 @@ export class SongsController {
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: number,
-  ) {
-    return `fetch a song based on id ${typeof id}`;
+  ): Promise<Song | null> {
+    return this.songsService.findOne(id);
+  }
+
+  @Put(':id')
+  update(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Body() updateSongDTO: UpdateSongDTO,
+  ): Promise<UpdateResult> {
+    return this.songsService.update(id, updateSongDTO)
+  }
+
+  @Delete(':id')
+  delete(@Param('id', new ParseIntPipe()) id: number): Promise<DeleteResult> {
+    return this.songsService.remove(id);
   }
 }
