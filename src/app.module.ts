@@ -19,6 +19,8 @@ import { PlayListModule } from './playlists/playlists.module';
 import { DataSource } from 'typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { ArtistsService } from './artists/artists.service';
+import { ArtistsModule } from './artists/artists.module';
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { UsersModule } from './users/users.module';
     PlayListModule,
     AuthModule,
     UsersModule,
+    ArtistsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
