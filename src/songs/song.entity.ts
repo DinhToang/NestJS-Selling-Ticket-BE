@@ -17,8 +17,8 @@ export class Song {
   @Column()
   title: string;
 
-  @Column('varchar', { array: true })
-  artists: string[];
+  // @Column('varchar', { array: true })
+  // artists: string[];
 
   @Column('date')
   releasedDate: Date;
@@ -30,8 +30,8 @@ export class Song {
   lyrics: string;
 
   @ManyToMany(() => Artist, (artist) => artist.songs, { cascade: true })
-  // @JoinTable({ name: 'songs_artists' })
-  // artists: Artist[];
+  @JoinTable({ name: 'songs_artists' })
+  artists: Artist[];
 
   /**
    * Many songs can belong to playlist for each unique user

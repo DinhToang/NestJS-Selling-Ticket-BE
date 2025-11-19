@@ -6,6 +6,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult } from 'typeorm/browser';
 import { UpdateResult } from 'typeorm/browser';
 import { UpdateSongDTO } from './dto/update-song-dto';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Artist } from '../artists/artist.entity';
+import { privateDecrypt } from 'crypto';
 
 @Injectable({
   scope: Scope.TRANSIENT,
@@ -17,6 +20,8 @@ export class SongsService {
   constructor(
     @InjectRepository(Song)
     private songsRepository: Repository<Song>,
+    @InjectRepository(Artist)
+    private artistsRepository: Repository<Artist>
   ) {}
 
   async create(songDTO: CreateSongDTO): Promise<Song> {
@@ -28,7 +33,11 @@ export class SongsService {
     song.lyrics = songDTO.lyrics;
     song.releasedDate = songDTO.releasedDate;
 
-    return await this.songsRepository.save(song);
+    const artists = await this.artistsRepository.findByIds(songDTO.artists)
+
+    song.artists = artists
+
+    return this.songsRepository.save(song);
   }
 
   findAll() : Promise<Song[]> {
@@ -43,7 +52,13 @@ export class SongsService {
     return this.songsRepository.update(id, recordToUpdate);
   }
 
-  async remove(id: number): Promise<DeleteResult>{
+  remove(id: number): Promise<DeleteResult>{
     return this.songsRepository.delete(id)
+  }
+
+  async paginate(options: IPaginationOptions): Promise<Pagination<Song>>{
+    const queryBuilder = this.songsRepository.createQueryBuilder('c');
+    queryBuilder.orderBy('c.releasedDate', 'DESC');
+    return paginate<Song>(queryBuilder, options)
   }
 }

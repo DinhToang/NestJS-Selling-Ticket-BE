@@ -17,6 +17,8 @@ import { User } from './users/user.entity';
 import { Playlist } from './playlists/playlist.entity';
 import { PlayListModule } from './playlists/playlists.module';
 import { DataSource } from 'typeorm';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -30,18 +32,17 @@ import { DataSource } from 'typeorm';
       entities: [Song, Artist, User, Playlist],
       synchronize: true,
     }),
-    
     SongsModule,
-    
     PlayListModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService,],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
-  constructor(private dataSource: DataSource){
-    console.log("dbName", dataSource.driver.database);
-    
+  constructor(private dataSource: DataSource) {
+    console.log('dbName', dataSource.driver.database);
   }
   configure(consumer: MiddlewareConsumer) {
     //consumer.apply(LoggerMiddleware).forRoutes("songs"); // Option 1
