@@ -10,9 +10,7 @@ import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginat
 import { Artist } from '../artists/artist.entity';
 import { privateDecrypt } from 'crypto';
 
-@Injectable({
-  scope: Scope.TRANSIENT,
-})
+@Injectable()
 export class SongsService {
   // local db
   // local array
