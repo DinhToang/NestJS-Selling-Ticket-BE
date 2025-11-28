@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { use } from 'passport';
 import { ArtistsService } from '../artists/artists.service';
 import { PayloadType } from './types';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
     private artistService: ArtistsService,
+    private congfigService: ConfigService,
   ) {}
 
   async login(loginDTO: LoginDTO): Promise<{ accessToken: String }> {
@@ -38,5 +40,9 @@ export class AuthService {
     } else {
       throw new UnauthorizedException('Password does not match'); // 5.
     }
+  }
+
+  getEnvVariable(){
+    return this.congfigService.get<string>('PORT');
   }
 }
