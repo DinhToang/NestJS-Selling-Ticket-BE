@@ -21,6 +21,7 @@ import { SeedModule } from './seed/seed.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import { validate } from '../env.validation';
+import { EventsModule } from './events/events.module';
 import 'dotenv/config';
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import 'dotenv/config';
     UsersModule,
     ArtistsModule,
     SeedModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
